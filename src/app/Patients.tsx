@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react'
-import { Search } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import type { FormEvent } from 'react'
+import { Plus, Search, X } from 'lucide-react'
 
 type Patient = {
   id: number
@@ -11,7 +12,7 @@ type Patient = {
   status: 'Active' | 'Follow-up'
 }
 
-const patients: Patient[] = [
+const initialPatients: Patient[] = [
   { id: 1, name: 'Aylin Mammadova', initials: 'AM', email: 'aylin.m@example.com', phone: '+994 50 234 18 62', lastVisit: 'Sep 24, 2026', status: 'Active' },
   { id: 2, name: 'Rashad Aliyev', initials: 'RA', email: 'rashad.a@example.com', phone: '+994 55 416 72 09', lastVisit: 'Sep 22, 2026', status: 'Follow-up' },
   { id: 3, name: 'Leyla Hasanli', initials: 'LH', email: 'leyla.h@example.com', phone: '+994 70 325 44 81', lastVisit: 'Sep 19, 2026', status: 'Active' },
@@ -21,14 +22,45 @@ const patients: Patient[] = [
 ]
 
 function Patients() {
+  const [patients, setPatients] = useState(initialPatients)
   const [query, setQuery] = useState('')
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+
+  useEffect(() => {
+    if (!isAddDialogOpen) return
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') setIsAddDialogOpen(false)
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isAddDialogOpen])
+
   const filteredPatients = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase()
     if (!normalizedQuery) return patients
     return patients.filter((patient) =>
       `${patient.name} ${patient.email} ${patient.phone}`.toLocaleLowerCase().includes(normalizedQuery),
     )
-  }, [query])
+  }, [patients, query])
+
+  function handleAddPatient(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    const trimmedName = name.trim()
+    if (!trimmedName) return
+    const initials = trimmedName.split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase()
+    setPatients((currentPatients) => [
+      { id: Date.now(), name: trimmedName, initials, email: email.trim(), phone: phone.trim(), lastVisit: 'No visits yet', status: 'Active' },
+      ...currentPatients,
+    ])
+    setQuery('')
+    setName('')
+    setEmail('')
+    setPhone('')
+    setIsAddDialogOpen(false)
+  }
 
   return (
     <section className="patients-page">
@@ -37,8 +69,28 @@ function Patients() {
           <h1>Patients</h1>
           <p>Manage your clinic's patient records.</p>
         </div>
-        <button className="add-patient-button" type="button" onClick={() => window.alert('Patient creation will be available soon.')}>+ Add patient</button>
+        <button className="add-patient-button" type="button" aria-label="Add patient" title="Add patient" onClick={() => setIsAddDialogOpen(true)}><Plus size={21} aria-hidden="true" /></button>
       </div>
+
+      {isAddDialogOpen && (
+        <div className="patient-modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setIsAddDialogOpen(false) }}>
+          <section className="patient-modal" role="dialog" aria-modal="true" aria-labelledby="add-patient-title">
+            <div className="patient-modal-heading">
+              <div><h2 id="add-patient-title">Add patient</h2><p>Enter the patient's contact details.</p></div>
+              <button className="patient-modal-close" type="button" aria-label="Close" onClick={() => setIsAddDialogOpen(false)}><X size={19} /></button>
+            </div>
+            <form className="patient-form" onSubmit={handleAddPatient}>
+              <label>Full name<input autoFocus required value={name} onChange={(event) => setName(event.target.value)} placeholder="e.g. Aylin Mammadova" /></label>
+              <label>Email<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="patient@example.com" /></label>
+              <label>Phone<input type="tel" value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="+994 50 123 45 67" /></label>
+              <div className="patient-form-actions">
+                <button className="patient-cancel-button" type="button" onClick={() => setIsAddDialogOpen(false)}>Cancel</button>
+                <button className="add-patient-button patient-submit-button" type="submit">Add patient</button>
+              </div>
+            </form>
+          </section>
+        </div>
+      )}
 
       <div className="patients-card">
         <div className="patients-toolbar">

@@ -145,7 +145,10 @@
 }
 
 .add-patient-button {
-  padding: 10px 15px;
+  display: grid;
+  width: 42px;
+  height: 42px;
+  padding: 0;
   border: 0;
   border-radius: 8px;
   background: #2563eb;
@@ -154,10 +157,125 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+  place-items: center;
 }
 
 .add-patient-button:hover {
   background: #1d4ed8;
+}
+
+.patient-modal-backdrop {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  padding: 20px;
+  background: rgb(17 24 39 / 42%);
+  place-items: center;
+}
+
+.patient-modal {
+  width: min(100%, 440px);
+  padding: 24px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 24px 60px rgb(15 23 42 / 20%);
+}
+
+.patient-modal-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.patient-modal-heading h2 {
+  color: #111827;
+  font-size: 19px;
+}
+
+.patient-modal-heading p {
+  margin-top: 6px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.patient-modal-close {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  place-items: center;
+}
+
+.patient-modal-close:hover {
+  background: #f3f4f6;
+}
+
+.patient-form {
+  display: grid;
+  gap: 16px;
+}
+
+.patient-form label {
+  display: grid;
+  gap: 7px;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.patient-form input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  color: #111827;
+  font: inherit;
+  font-size: 14px;
+}
+
+.patient-form input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 12%);
+}
+
+.patient-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.patient-cancel-button,
+.patient-submit-button {
+  width: auto;
+  height: 40px;
+  padding: 0 15px;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.patient-cancel-button {
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #374151;
+  cursor: pointer;
+}
+
+.patient-cancel-button:hover {
+  background: #f9fafb;
 }
 
 .patients-card {
