@@ -278,6 +278,11 @@
   background: #f9fafb;
 }
 
+.patient-submit-button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
 .patients-card {
   overflow: hidden;
   border: 1px solid #e5e7eb;
@@ -455,6 +460,16 @@
 
 .patients-table-wrap {
   overflow-x: auto;
+}
+
+.patient-error {
+  margin: 12px 20px;
+  padding: 11px 13px;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 13px;
 }
 
 .patients-table {

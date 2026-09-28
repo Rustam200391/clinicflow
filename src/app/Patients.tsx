@@ -1,28 +1,34 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Plus, Search, X } from 'lucide-react'
 
 type Patient = {
-  id: number
+  id: string
   name: string
   initials: string
-  email: string
-  phone: string
-  lastVisit: string
+  email: string | null
+  phone: string | null
+  lastVisit: string | null
   status: 'Active' | 'Follow-up'
 }
 
-const initialPatients: Patient[] = [
-  { id: 1, name: 'Aylin Mammadova', initials: 'AM', email: 'aylin.m@example.com', phone: '+994 50 234 18 62', lastVisit: 'Sep 24, 2026', status: 'Active' },
-  { id: 2, name: 'Rashad Aliyev', initials: 'RA', email: 'rashad.a@example.com', phone: '+994 55 416 72 09', lastVisit: 'Sep 22, 2026', status: 'Follow-up' },
-  { id: 3, name: 'Leyla Hasanli', initials: 'LH', email: 'leyla.h@example.com', phone: '+994 70 325 44 81', lastVisit: 'Sep 19, 2026', status: 'Active' },
-  { id: 4, name: 'Murad Karimov', initials: 'MK', email: 'murad.k@example.com', phone: '+994 50 891 06 33', lastVisit: 'Sep 16, 2026', status: 'Active' },
-  { id: 5, name: 'Nigar Safarova', initials: 'NS', email: 'nigar.s@example.com', phone: '+994 51 773 29 14', lastVisit: 'Sep 12, 2026', status: 'Follow-up' },
-  { id: 6, name: 'Tural Huseynov', initials: 'TH', email: 'tural.h@example.com', phone: '+994 55 602 11 47', lastVisit: 'Sep 08, 2026', status: 'Active' },
-]
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? ''
+
+async function getErrorMessage(response: Response) {
+  try {
+    const body = await response.json() as { detail?: string; errors?: Record<string, string> }
+    return body.errors ? Object.values(body.errors).join(' ') : body.detail || `Request failed (${response.status}).`
+  } catch {
+    return `Request failed (${response.status}).`
+  }
+}
 
 function Patients() {
-  const [patients, setPatients] = useState(initialPatients)
+  const [patients, setPatients] = useState<Patient[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [loadError, setLoadError] = useState('')
+  const [formError, setFormError] = useState('')
+  const [isSaving, setIsSaving] = useState(false)
   const [query, setQuery] = useState('')
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [name, setName] = useState('')
@@ -38,28 +44,48 @@ function Patients() {
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [isAddDialogOpen])
 
-  const filteredPatients = useMemo(() => {
-    const normalizedQuery = query.trim().toLocaleLowerCase()
-    if (!normalizedQuery) return patients
-    return patients.filter((patient) =>
-      `${patient.name} ${patient.email} ${patient.phone}`.toLocaleLowerCase().includes(normalizedQuery),
-    )
-  }, [patients, query])
+  useEffect(() => {
+    const controller = new AbortController()
+    const params = new URLSearchParams()
+    if (query.trim()) params.set('search', query.trim())
+    setIsLoading(true)
+    setLoadError('')
+    fetch(`${apiBaseUrl}/api/patients?${params}`, { signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) throw new Error(await getErrorMessage(response))
+        return response.json() as Promise<Patient[]>
+      })
+      .then(setPatients)
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === 'AbortError') return
+        setLoadError(error instanceof Error ? error.message : 'Unable to load patients.')
+      })
+      .finally(() => { if (!controller.signal.aborted) setIsLoading(false) })
+    return () => controller.abort()
+  }, [query])
 
   function handleAddPatient(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const trimmedName = name.trim()
     if (!trimmedName) return
-    const initials = trimmedName.split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase()
-    setPatients((currentPatients) => [
-      { id: Date.now(), name: trimmedName, initials, email: email.trim(), phone: phone.trim(), lastVisit: 'No visits yet', status: 'Active' },
-      ...currentPatients,
-    ])
-    setQuery('')
-    setName('')
-    setEmail('')
-    setPhone('')
-    setIsAddDialogOpen(false)
+    setIsSaving(true)
+    setFormError('')
+    fetch(`${apiBaseUrl}/api/patients`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: trimmedName, email: email.trim(), phone: phone.trim() }),
+    }).then(async (response) => {
+      if (!response.ok) throw new Error(await getErrorMessage(response))
+      const createdPatient = await response.json() as Patient
+      setPatients((currentPatients) => [createdPatient, ...currentPatients])
+      setQuery('')
+      setName('')
+      setEmail('')
+      setPhone('')
+      setIsAddDialogOpen(false)
+    }).catch((error: unknown) => {
+      setFormError(error instanceof Error ? error.message : 'Unable to save patient.')
+    }).finally(() => setIsSaving(false))
   }
 
   return (
@@ -80,12 +106,13 @@ function Patients() {
               <button className="patient-modal-close" type="button" aria-label="Close" onClick={() => setIsAddDialogOpen(false)}><X size={19} /></button>
             </div>
             <form className="patient-form" onSubmit={handleAddPatient}>
+              {formError && <div className="patient-error" role="alert">{formError}</div>}
               <label>Full name<input autoFocus required value={name} onChange={(event) => setName(event.target.value)} placeholder="e.g. Aylin Mammadova" /></label>
               <label>Email<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="patient@example.com" /></label>
               <label>Phone<input type="tel" value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="+994 50 123 45 67" /></label>
               <div className="patient-form-actions">
                 <button className="patient-cancel-button" type="button" onClick={() => setIsAddDialogOpen(false)}>Cancel</button>
-                <button className="add-patient-button patient-submit-button" type="submit">Add patient</button>
+                <button className="add-patient-button patient-submit-button" type="submit" disabled={isSaving}>{isSaving ? 'Saving...' : 'Add patient'}</button>
               </div>
             </form>
           </section>
@@ -96,7 +123,7 @@ function Patients() {
         <div className="patients-toolbar">
           <div>
             <h2>All patients</h2>
-            <span>{filteredPatients.length} patients</span>
+            <span>{isLoading ? 'Loading...' : `${patients.length} patients`}</span>
           </div>
           <label className="patient-search">
             <Search size={17} aria-hidden="true" />
@@ -110,13 +137,15 @@ function Patients() {
           </label>
         </div>
 
+        {loadError && <div className="patient-error" role="alert">{loadError}</div>}
+
         <div className="patients-table-wrap">
           <table className="patients-table">
             <thead>
               <tr><th>Patient</th><th>Phone</th><th>Last visit</th><th>Status</th></tr>
             </thead>
             <tbody>
-              {filteredPatients.map((patient) => (
+              {patients.map((patient) => (
                 <tr key={patient.id}>
                   <td>
                     <div className="patient-identity">
@@ -124,12 +153,12 @@ function Patients() {
                       <span><strong>{patient.name}</strong><small>{patient.email}</small></span>
                     </div>
                   </td>
-                  <td>{patient.phone}</td>
-                  <td>{patient.lastVisit}</td>
+                  <td>{patient.phone || '—'}</td>
+                  <td>{patient.lastVisit ? new Intl.DateTimeFormat('en', { month: 'short', day: '2-digit', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${patient.lastVisit}T00:00:00Z`)) : 'No visits yet'}</td>
                   <td><span className={`patient-status ${patient.status === 'Active' ? 'is-active' : 'needs-follow-up'}`}>{patient.status}</span></td>
                 </tr>
               ))}
-              {filteredPatients.length === 0 && (
+              {!isLoading && patients.length === 0 && (
                 <tr><td className="patients-empty" colSpan={4}>No patients match “{query}”.</td></tr>
               )}
             </tbody>
