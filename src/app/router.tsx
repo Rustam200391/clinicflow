@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 
 import AppLayout from '../components/layout/AppLayout'
+import Patients from './Patients'
 
 function Dashboard() {
   return (
@@ -31,6 +32,10 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <Dashboard />,
+      },
+      {
+        path: 'patients',
+        element: <Patients />,
       },
     ],
   },
