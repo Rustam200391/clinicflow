@@ -1,75 +1,64 @@
-# React + TypeScript + Vite
+# ClinicFlow
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Clinic management system for small and medium-sized clinics.
 
-Currently, two official plugins are available:
+ClinicFlow is a full-stack web application designed to simplify everyday clinic operations: patient management, doctors, appointments, scheduling, staff access and communication with patients.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The project is being developed with a focus on practical clinic workflows and real-world testing.
 
-## React Compiler
+> 🚧 ClinicFlow is currently under active development.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Overview
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+ClinicFlow is intended to provide a single workspace for clinic administrators, doctors and reception staff.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+The main goal is to make common clinic operations simple:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- manage patients
+- manage doctors and employees
+- organize appointments
+- manage doctor schedules
+- keep patient visit history
+- provide different access levels for clinic staff
+- send appointment confirmations and reminders
+- generate operational reports
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+The system is being developed incrementally, with working features tested before adding new functionality.
 
-```
+---
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+## Current Features
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Patients
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Patient list
+- Patient search
+- Create patient
+- Patient details
+- Visit history
+- Add visit records
 
-```
+### Doctors
+
+- Doctors list
+- Doctor details
+- Doctor information linked to the system user
+- Current clinic scope
+- Doctor role (`DOCTOR`)
+
+### Backend API
+
+Current API includes:
+
+```text
+GET    /api/patients
+GET    /api/patients?search=...
+POST   /api/patients
+GET    /api/patients/{patientId}
+GET    /api/patients/{patientId}/visits
+POST   /api/patients/{patientId}/visits
+
+GET    /api/doctors
+GET    /api/doctors/{doctorId}
