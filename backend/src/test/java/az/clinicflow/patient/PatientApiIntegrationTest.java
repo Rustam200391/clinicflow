@@ -3,6 +3,7 @@ package az.clinicflow.patient;
 import az.clinicflow.clinic.Clinic;
 import az.clinicflow.clinic.ClinicRepository;
 import az.clinicflow.visit.VisitRepository;
+import az.clinicflow.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +39,14 @@ class PatientApiIntegrationTest {
     @Autowired
     private VisitRepository visits;
 
+    @Autowired
+    private UserRepository users;
+
     @BeforeEach
     void setUp() {
         visits.deleteAll();
         patients.deleteAll();
+        users.deleteAll();
         clinics.deleteAll();
         clinics.save(new Clinic(CLINIC_ID, "Test Clinic"));
     }

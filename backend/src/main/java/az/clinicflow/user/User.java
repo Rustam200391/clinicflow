@@ -44,4 +44,9 @@ public class User {
         this.role = role;
         this.createdAt = Instant.now();
     }
+
+    public UUID getId() { return id; }
+    public String getFullName() { return fullName; }
+    public String getEmail() { return email; }
+    public String getRole() { return role; }
 }

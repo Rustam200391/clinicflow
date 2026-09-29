@@ -29,6 +29,9 @@ public class DevelopmentSeed {
                 users.save(new User(UUID.fromString("00000000-0000-4000-8000-000000000002"), clinic,
                         "ClinicFlow Admin", "admin@clinicflow.az", "ADMIN"));
             }
+            seedDoctor(users, clinic, "00000000-0000-4000-8000-000000000003", "Dr. Leyla Hasanli", "leyla.hasanli@clinicflow.az");
+            seedDoctor(users, clinic, "00000000-0000-4000-8000-000000000004", "Dr. Kamran Aliyev", "kamran.aliyev@clinicflow.az");
+            seedDoctor(users, clinic, "00000000-0000-4000-8000-000000000005", "Dr. Nigar Mammadova", "nigar.mammadova@clinicflow.az");
             if (patients.count() == 0) {
                 patients.saveAll(List.of(
                         patient(clinic, "Aylin Mammadova", "aylin.m@example.com", "+994 50 234 18 62", "2026-09-24", PatientStatus.ACTIVE),
@@ -40,6 +43,13 @@ public class DevelopmentSeed {
                 ));
             }
         };
+    }
+
+    private void seedDoctor(UserRepository users, Clinic clinic, String id, String fullName, String email) {
+        UUID doctorId = UUID.fromString(id);
+        if (!users.existsById(doctorId)) {
+            users.save(new User(doctorId, clinic, fullName, email, "DOCTOR"));
+        }
     }
 
     private Patient patient(Clinic clinic, String name, String email, String phone, String lastVisit, PatientStatus status) {

@@ -3,6 +3,7 @@ import { createBrowserRouter } from 'react-router-dom'
 import AppLayout from '../components/layout/AppLayout'
 import PatientDetails from './PatientDetails'
 import Patients from './Patients'
+import Doctors from './Doctors'
 
 function Dashboard() {
   return (
@@ -41,6 +42,10 @@ export const router = createBrowserRouter([
       {
         path: 'patients/:patientId',
         element: <PatientDetails />,
+      },
+      {
+        path: 'doctors',
+        element: <Doctors />,
       },
     ],
   },

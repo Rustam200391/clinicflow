@@ -20,9 +20,9 @@ function Sidebar() {
           Patients
         </NavLink>
 
-        <div className="nav-item">
+        <NavLink to="/doctors" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>
           Doctors
-        </div>
+        </NavLink>
 
         <div className="nav-item">
           Employees
