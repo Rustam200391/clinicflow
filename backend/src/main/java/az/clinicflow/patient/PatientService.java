@@ -27,7 +27,10 @@ public class PatientService {
 
     public List<PatientResponse> search(String query) {
         String search = query == null || query.isBlank() ? null : query.trim();
-        return patients.searchByClinic(clinicId, search).stream().map(PatientResponse::from).toList();
+        List<Patient> results = search == null
+                ? patients.findByClinic_IdOrderByNameAsc(clinicId)
+                : patients.searchByClinic(clinicId, search);
+        return results.stream().map(PatientResponse::from).toList();
     }
 
     @Transactional
