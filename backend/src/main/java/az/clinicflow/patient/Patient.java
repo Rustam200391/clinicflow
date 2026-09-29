@@ -65,4 +65,10 @@ public class Patient {
     public String getPhone() { return phone; }
     public LocalDate getLastVisit() { return lastVisit; }
     public PatientStatus getStatus() { return status; }
+
+    public void updateLastVisitIfLater(LocalDate visitDate) {
+        if (lastVisit == null || visitDate.isAfter(lastVisit)) {
+            lastVisit = visitDate;
+        }
+    }
 }

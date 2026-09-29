@@ -33,6 +33,12 @@ public class PatientService {
         return results.stream().map(PatientResponse::from).toList();
     }
 
+    public PatientResponse getById(UUID patientId) {
+        return patients.findByIdAndClinic_Id(patientId, clinicId)
+                .map(PatientResponse::from)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Patient not found"));
+    }
+
     @Transactional
     public PatientResponse create(CreatePatientRequest request) {
         Clinic clinic = clinics.findById(clinicId)

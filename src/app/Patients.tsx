@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Plus, Search, X } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 type Patient = {
   id: string
@@ -150,7 +151,7 @@ function Patients() {
                   <td>
                     <div className="patient-identity">
                       <span className="patient-avatar">{patient.initials}</span>
-                      <span><strong>{patient.name}</strong><small>{patient.email}</small></span>
+                      <span><Link className="patient-name-link" to={`/patients/${patient.id}`}><strong>{patient.name}</strong></Link><small>{patient.email}</small></span>
                     </div>
                   </td>
                   <td>{patient.phone || '—'}</td>

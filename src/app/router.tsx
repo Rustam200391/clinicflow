@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 
 import AppLayout from '../components/layout/AppLayout'
+import PatientDetails from './PatientDetails'
 import Patients from './Patients'
 
 function Dashboard() {
@@ -36,6 +37,10 @@ export const router = createBrowserRouter([
       {
         path: 'patients',
         element: <Patients />,
+      },
+      {
+        path: 'patients/:patientId',
+        element: <PatientDetails />,
       },
     ],
   },
