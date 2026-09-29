@@ -1,61 +1,67 @@
-# ClinicFlow
+# 🏥 ClinicFlow
 
-Clinic management system for small and medium-sized clinics.
+### Modern clinic management system for everyday healthcare workflows
 
-ClinicFlow is a full-stack web application designed to simplify everyday clinic operations: patient management, doctors, appointments, scheduling, staff access and communication with patients.
+ClinicFlow is a full-stack clinic management system designed for small and medium-sized clinics.
 
-The project is being developed with a focus on practical clinic workflows and real-world testing.
+The project focuses on practical workflows for **administrators, doctors and reception staff** — from patient registration and doctor management to appointments, scheduling and patient communication.
 
-> 🚧 ClinicFlow is currently under active development.
-
----
-
-## Overview
-
-ClinicFlow is intended to provide a single workspace for clinic administrators, doctors and reception staff.
-
-The main goal is to make common clinic operations simple:
-
-- manage patients
-- manage doctors and employees
-- organize appointments
-- manage doctor schedules
-- keep patient visit history
-- provide different access levels for clinic staff
-- send appointment confirmations and reminders
-- generate operational reports
-
-The system is being developed incrementally, with working features tested before adding new functionality.
+> 🚧 **ClinicFlow is currently under active development.**
 
 ---
 
-## Current Features
+## ✨ What is ClinicFlow?
 
-### Patients
+ClinicFlow aims to bring the main daily clinic operations into one simple workspace.
 
-- Patient list
-- Patient search
-- Create patient
-- Patient details
-- Visit history
-- Add visit records
+### 👥 For clinic staff
 
-### Doctors
+- 👨‍⚕️ Manage doctors
+- 👩‍💼 Manage employees and roles
+- 🧑‍🤝‍🧑 Manage patients
+- 📅 Create and manage appointments
+- 🗓️ Organize doctor schedules
+- 📝 Keep patient visit history
+- 🔐 Control access based on user roles
+- 💬 Communicate appointment information to patients
+- 📊 View operational reports
 
-- Doctors list
-- Doctor details
-- Doctor information linked to the system user
-- Current clinic scope
-- Doctor role (`DOCTOR`)
+The system is being developed incrementally, with each feature tested before moving to the next part of the product.
 
-### Backend API
+---
 
-Current API includes:
+# 🚀 Current Features
+
+## 🧑‍🤝‍🧑 Patients
+
+- ✅ Patient list
+- ✅ Patient search
+- ✅ Create patient
+- ✅ Patient details
+- ✅ Visit history
+- ✅ Add visit records
+
+---
+
+## 👨‍⚕️ Doctors
+
+- ✅ Doctors list
+- ✅ Doctor details
+- ✅ Doctor profile linked to a system user
+- ✅ Clinic-level scope
+- ✅ `DOCTOR` system role
+
+---
+
+## 🔌 Backend API
+
+Current API endpoints:
 
 ```text
 GET    /api/patients
 GET    /api/patients?search=...
 POST   /api/patients
+
 GET    /api/patients/{patientId}
 GET    /api/patients/{patientId}/visits
 POST   /api/patients/{patientId}/visits
