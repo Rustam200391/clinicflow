@@ -2,8 +2,10 @@ package az.clinicflow.doctor;
 
 import az.clinicflow.user.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,5 +27,11 @@ public class DoctorService {
                 .stream()
                 .map(DoctorResponse::from)
                 .toList();
+    }
+
+    public DoctorResponse getById(UUID doctorId) {
+        return users.findByIdAndClinic_IdAndRole(doctorId, clinicId, "DOCTOR")
+                .map(DoctorResponse::from)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Doctor not found"));
     }
 }

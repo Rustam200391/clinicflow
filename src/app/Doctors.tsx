@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 type Doctor = {
   id: string
@@ -76,7 +77,7 @@ function Doctors() {
                   <td>
                     <div className="patient-identity">
                       <span className="patient-avatar">{initials(doctor.name)}</span>
-                      <strong>{doctor.name}</strong>
+                      <Link className="patient-name-link" to={`/doctors/${doctor.id}`}><strong>{doctor.name}</strong></Link>
                     </div>
                   </td>
                   <td>{doctor.email}</td>

@@ -4,6 +4,7 @@ import AppLayout from '../components/layout/AppLayout'
 import PatientDetails from './PatientDetails'
 import Patients from './Patients'
 import Doctors from './Doctors'
+import DoctorDetails from './DoctorDetails'
 
 function Dashboard() {
   return (
@@ -46,6 +47,10 @@ export const router = createBrowserRouter([
       {
         path: 'doctors',
         element: <Doctors />,
+      },
+      {
+        path: 'doctors/:doctorId',
+        element: <DoctorDetails />,
       },
     ],
   },
